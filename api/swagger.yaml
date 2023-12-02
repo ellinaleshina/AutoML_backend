@@ -1,0 +1,319 @@
+basePath: /
+definitions:
+  models.Project:
+    properties:
+      project_name:
+        type: string
+      project_type:
+        type: string
+      result_link:
+        type: string
+      status:
+        type: string
+      target:
+        type: string
+    type: object
+  models.User:
+    properties:
+      email:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      password:
+        type: string
+      phone:
+        type: string
+      projects:
+        items:
+          $ref: '#/definitions/models.Project'
+        type: array
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: API specs for LinAutoML
+  title: LinAutoML API
+  version: 0.0.1
+paths:
+  /project:
+    get:
+      operationId: getAllProjects
+      responses:
+        "200":
+          description: ok
+          schema:
+            items:
+              $ref: '#/definitions/models.Project'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      summary: Get all projects
+      tags:
+      - Project
+  /project/{id}:
+    delete:
+      operationId: deleteProject
+      parameters:
+      - description: Project ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Delete Project
+      tags:
+      - Project
+    get:
+      operationId: getProjectById
+      parameters:
+      - description: Project ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: ok
+          schema:
+            $ref: '#/definitions/models.Project'
+      security:
+      - ApiKeyAuth: []
+      summary: Get project by id
+      tags:
+      - Project
+  /project/create:
+    post:
+      consumes:
+      - multipart/form-data
+      operationId: createProject
+      parameters:
+      - description: Dataset file
+        in: formData
+        name: Dataset
+        required: true
+        type: file
+      - description: project name
+        in: formData
+        name: ProjectName
+        required: true
+        type: string
+      - description: project type
+        enum:
+        - Логистическая регрессия
+        - Случайный лес
+        in: formData
+        name: ProjectType
+        required: true
+        type: string
+      - description: project info
+        in: formData
+        name: ProjectTarget
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: New Project Creating
+      tags:
+      - Project
+  /project/edit:
+    put:
+      operationId: editProject
+      parameters:
+      - description: Dataset file
+        in: formData
+        name: Dataset
+        required: true
+        type: file
+      - description: project name
+        in: formData
+        name: ProjectName
+        required: true
+        type: string
+      - description: project type
+        enum:
+        - Логистическая регрессия
+        - Случайный лес
+        - Линейная регрессия
+        - Метод опорных векторов
+        in: formData
+        name: ProjectType
+        required: true
+        type: string
+      - description: project info
+        in: formData
+        name: ProjectTarget
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Edit Project
+      tags:
+      - Project
+  /project/type/{type}:
+    get:
+      operationId: getProjByType
+      parameters:
+      - description: Project type
+        enum:
+        - logreg
+        - randf
+        - linreg
+        - vect
+        in: path
+        name: type
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ok
+          schema:
+            items:
+              $ref: '#/definitions/models.Project'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      summary: Get Projects by type
+      tags:
+      - Project
+  /user:
+    get:
+      operationId: getAllUsers
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            items:
+              $ref: '#/definitions/models.User'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      summary: Get all users
+      tags:
+      - User
+  /user/{id}:
+    delete:
+      operationId: deleteProfile
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Delete profile
+      tags:
+      - User
+    get:
+      operationId: getUserById
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: ok
+          schema:
+            $ref: '#/definitions/models.User'
+      security:
+      - ApiKeyAuth: []
+      summary: Get user profile by id
+      tags:
+      - User
+  /user/edit:
+    put:
+      operationId: editProfile
+      parameters:
+      - description: UserData
+        in: body
+        name: UserData
+        required: true
+        schema:
+          $ref: '#/definitions/models.User'
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Edit Profile
+      tags:
+      - User
+  /user/login:
+    post:
+      consumes:
+      - multipart/form-data
+      operationId: login
+      parameters:
+      - description: Username
+        in: formData
+        name: Username
+        required: true
+        type: string
+      - description: Password
+        in: formData
+        name: Password
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+      summary: User login
+      tags:
+      - User
+  /user/register:
+    post:
+      consumes:
+      - application/json
+      operationId: registerUser
+      parameters:
+      - description: UserData
+        in: body
+        name: UserData
+        required: true
+        schema:
+          $ref: '#/definitions/models.User'
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+      summary: New User registration
+      tags:
+      - User
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
